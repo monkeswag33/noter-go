@@ -6,6 +6,7 @@ import (
 
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/olekukonko/tablewriter"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -18,12 +19,16 @@ var notesCmd = &cobra.Command{
 		id, _ := cmd.Flags().GetInt("id")
 		name, _ := cmd.Flags().GetString("name")
 		var notes []db.Note = db.GetNotes(owner, id, name)
+		logrus.Debug("Retrieved list of notes")
 		var table *tablewriter.Table = tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"Id", "Name", "Owner"})
+		logrus.Trace("Set headers of table")
 		for _, user := range notes {
 			var stringrepr []string = []string{fmt.Sprint(user.ID), user.Name, user.User.Username}
 			table.Append(stringrepr)
+			logrus.Trace("Added row to table")
 		}
+		logrus.Debug("Rendering table...")
 		table.Render()
 	},
 }
