@@ -20,7 +20,7 @@ import (
 
 // noteCmd represents the note command
 var noteCmd = &cobra.Command{
-	Use:   "note",
+	Use:   "note <note name>",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -29,13 +29,17 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
+		var name string
 		username, _ := cmd.Flags().GetString("user")
-		if len(name) == 0 {
-			logrus.Debug("Note name not given as parameter, prompting for it")
+		body, _ := cmd.Flags().GetString("body")
+		if len(args) == 1 {
+			logrus.Debug("Note name given as argument, using it")
+			name = args[0]
+			if err := newNoteValidateNoteName(name); err != nil {
+				logrus.Fatal(err)
+			}
+		} else {
 			name = global.Prompt(promptui.Prompt{}, "Note name:", newNoteValidateNoteName)
-		} else if err := newNoteValidateNoteName(name); err != nil {
-			logrus.Fatal(err)
 		}
 		logrus.Debug("Note name passed validation")
 		if len(username) == 0 {
@@ -45,8 +49,13 @@ to quickly create a Cobra application.`,
 			logrus.Fatal(err)
 		}
 		logrus.Debug("Username passed validation")
-		var body string = getBody()
-		logrus.Debug("Got body of note")
+		if len(body) == 0 {
+			logrus.Debug("Body not given as parameter, prompting for it")
+			body = getBody()
+			logrus.Debug("Got body of note")
+		} else {
+			logrus.Debug("Body given as parameter, using it")
+		}
 		note, err := db.CreateNote(name, body, username)
 		logrus.Info("Created note")
 		if err != nil {
@@ -54,23 +63,6 @@ to quickly create a Cobra application.`,
 		}
 		fmt.Printf("Created note %q\n", note.Name)
 	},
-}
-
-func newNoteValidateNoteName(noteName string) error {
-	if len(noteName) < 5 {
-		return errors.New("note name must be at least 5 characters long")
-	}
-	if db.CheckNoteExists(noteName) {
-		return errors.New("note already exists")
-	}
-	return nil
-}
-
-func newNoteValidateUsername(username string) error {
-	if !db.CheckUserExists(username) {
-		return errors.New("user does not exist")
-	}
-	return nil
 }
 
 func init() {
@@ -84,8 +76,8 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	noteCmd.Flags().StringP("name", "n", "", "Name of the note")
 	noteCmd.Flags().StringP("user", "u", "", "User that the note will be added to")
+	noteCmd.Flags().StringP("body", "b", "", "Body of note")
 }
 
 func getBody() string {
@@ -105,4 +97,21 @@ func getBody() string {
 		fmt.Println(scanner.Err())
 	}
 	return lines
+}
+
+func newNoteValidateNoteName(noteName string) error {
+	if len(noteName) < 5 {
+		return errors.New("note name must be at least 5 characters long")
+	}
+	if db.CheckNoteExists(noteName) {
+		return errors.New("note already exists")
+	}
+	return nil
+}
+
+func newNoteValidateUsername(username string) error {
+	if !db.CheckUserExists(username) {
+		return errors.New("user does not exist")
+	}
+	return nil
 }
