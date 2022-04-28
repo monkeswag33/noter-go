@@ -51,7 +51,7 @@ to quickly create a Cobra application.`,
 			logrus.Debug("Username was not given, prompting for it")
 			username = global.Prompt(promptui.Prompt{}, "Username:", newUserValidateUsername)
 		}
-		logrus.Debug("Username passed validations")
+		logrus.Debug("Username passed validation")
 		password, _ := cmd.Flags().GetString("password")
 		if len(password) == 0 {
 			logrus.Debug("Password was not given as parameter, prompting for it")
