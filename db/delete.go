@@ -6,3 +6,10 @@ func DeleteUser(username string) User {
 	db.Delete(&user)
 	return user
 }
+
+func DeleteNote(noteName string) Note {
+	var note Note
+	db.First(&note, "name = ?", noteName)
+	db.Delete(&note)
+	return note
+}
