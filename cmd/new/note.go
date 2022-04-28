@@ -6,13 +6,13 @@ package new
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/errordef"
 	"github.com/monkeswag33/noter-go/global"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -29,40 +29,48 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var name string
 		username, _ := cmd.Flags().GetString("user")
 		body, _ := cmd.Flags().GetString("body")
-		if len(args) == 1 {
-			logrus.Debug("Note name given as argument, using it")
-			name = args[0]
-			if err := newNoteValidateNoteName(name); err != nil {
-				logrus.Fatal(err)
-			}
-		} else {
-			name = global.Prompt(promptui.Prompt{}, "Note name:", newNoteValidateNoteName)
-		}
-		logrus.Debug("Note name passed validation")
-		if len(username) == 0 {
-			logrus.Debug("Username not given as parameter, prompting for it")
-			username = global.Prompt(promptui.Prompt{}, "User note belongs to?", newNoteValidateUsername)
-		} else if err := newNoteValidateUsername(username); err != nil {
-			logrus.Fatal(err)
-		}
-		logrus.Debug("Username passed validation")
-		if len(body) == 0 {
-			logrus.Debug("Body not given as parameter, prompting for it")
-			body = getBody()
-			logrus.Debug("Got body of note")
-		} else {
-			logrus.Debug("Body given as parameter, using it")
-		}
-		note, err := db.CreateNote(name, body, username)
-		logrus.Info("Created note")
+		note, err := createNote(args, username, body)
 		if err != nil {
 			logrus.Fatal(err)
 		}
 		fmt.Printf("Created note %q\n", note.Name)
 	},
+}
+
+func createNote(args []string, username string, body string) (db.Note, error) {
+	var name string
+	if len(args) == 1 {
+		logrus.Debug("Note name given as argument, using it")
+		name = args[0]
+		if err := newNoteValidateNoteName(name); err != nil {
+			return db.Note{}, err
+		}
+	} else {
+		name = global.Prompt(promptui.Prompt{}, "Note name:", newNoteValidateNoteName)
+	}
+	logrus.Debug("Note name passed validation")
+	if len(username) == 0 {
+		logrus.Debug("Username not given as parameter, prompting for it")
+		username = global.Prompt(promptui.Prompt{}, "User note belongs to?", newNoteValidateUsername)
+	} else if err := newNoteValidateUsername(username); err != nil {
+		return db.Note{}, err
+	}
+	logrus.Debug("Username passed validation")
+	if len(body) == 0 {
+		logrus.Debug("Body not given as parameter, prompting for it")
+		body = getBody()
+		logrus.Debug("Got body of note")
+	} else {
+		logrus.Debug("Body given as parameter, using it")
+	}
+	note, err := db.CreateNote(name, body, username)
+	logrus.Info("Created note")
+	if err != nil {
+		return db.Note{}, err
+	}
+	return note, nil
 }
 
 func init() {
@@ -101,17 +109,17 @@ func getBody() string {
 
 func newNoteValidateNoteName(noteName string) error {
 	if len(noteName) < 5 {
-		return errors.New("note name must be at least 5 characters long")
+		return errordef.ErrNoteNameTooShort
 	}
 	if db.CheckNoteExists(noteName) {
-		return errors.New("note already exists")
+		return errordef.ErrNoteAlreadyExists
 	}
 	return nil
 }
 
 func newNoteValidateUsername(username string) error {
 	if !db.CheckUserExists(username) {
-		return errors.New("user does not exist")
+		return errordef.ErrUserDoesntExist
 	}
 	return nil
 }

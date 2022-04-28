@@ -19,8 +19,11 @@ var noteCmd = &cobra.Command{
 		if len(args) != 1 {
 			logrus.Debug("Note name not found, prompting")
 			noteName = global.Prompt(promptui.Prompt{}, "Note name:", describeNoteValidateNote)
-		} else if err := describeNoteValidateNote(noteName); err != nil {
-			logrus.Fatal(err)
+		} else {
+			noteName = args[0]
+			if err := describeNoteValidateNote(noteName); err != nil {
+				logrus.Fatal(err)
+			}
 		}
 		logrus.Debug("Note name passed validation")
 		var note db.Note = db.GetNotes("", 0, noteName)[0]
