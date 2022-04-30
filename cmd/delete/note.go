@@ -1,11 +1,11 @@
 package delete
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/errordef"
 	"github.com/monkeswag33/noter-go/global"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -28,9 +28,13 @@ var noteCmd = &cobra.Command{
 			noteName = global.Prompt(promptui.Prompt{}, "Note name:", deleteNoteValidateNoteName)
 		}
 		logrus.Debug("Username passed validation")
-		var deletedNote db.Note = db.DeleteNote(noteName)
+		if err := global.DB.DeleteNote(db.Note{
+			Name: noteName,
+		}); err != nil {
+			logrus.Fatal(err)
+		}
 		logrus.Info("Deleted note")
-		fmt.Printf("Deleted note %q\n", deletedNote.Name)
+		fmt.Printf("Deleted note %q\n", noteName)
 	},
 }
 
@@ -39,8 +43,14 @@ func init() {
 }
 
 func deleteNoteValidateNoteName(noteName string) error {
-	if !db.CheckNoteExists(noteName) {
-		return errors.New("note does not exist")
+	exists, err := global.DB.CheckNoteExists(db.Note{
+		Name: noteName,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if !exists {
+		return errordef.ErrNoteDoesntExist
 	}
 	return nil
 }

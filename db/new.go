@@ -1,48 +1,44 @@
 package db
 
-import (
-	"errors"
-)
-
-func CreateUser(username string, password string) (User, error) {
-	var user User = User{
-		Username: username,
-		Password: password,
+func (db *DB) CreateUser(user *User) error {
+	if err := db.DB.Create(user).Error; err != nil {
+		return err
 	}
-	if err := db.Create(&user).Error; err != nil {
-		return User{}, errors.New("User already exists")
-	}
-	return user, nil
+	return nil
 }
 
-func CreateNote(name string, body string, username string) (Note, error) {
+func (db *DB) CreateNote(note *Note) error {
 	var user User
-	db.First(&user, "username = ?", username)
-	var note Note = Note{
-		Name: name,
-		Body: body,
-		User: user,
+	if err := db.DB.First(&user, "username = ?", note.User.Username).Error; err != nil {
+		return err
 	}
-	db.Create(&note)
-	return note, nil
+	note.User = user
+	if err := db.DB.Create(note).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
-func CheckUserExists(username string) bool {
-	var users []User
-	db.Find(&users, "username = ?", username)
-	if len(users) == 1 {
-		return true
+func (db *DB) CheckUserExists(conditions User) (bool, error) {
+	var count int64
+	if err := db.DB.Model(&User{}).Where(&conditions).Count(&count).Error; err != nil {
+		return false, err
+	}
+	if count == 1 {
+		return true, nil
 	} else {
-		return false
+		return false, nil
 	}
 }
 
-func CheckNoteExists(noteName string) bool {
-	var notes []Note
-	db.Find(&notes, "name = ?", noteName)
-	if len(notes) == 1 {
-		return true
+func (db *DB) CheckNoteExists(conditions Note) (bool, error) {
+	var count int64
+	if err := db.DB.Model(&Note{}).Where(&conditions).Count(&count).Error; err != nil {
+		return false, err
+	}
+	if count == 1 {
+		return true, nil
 	} else {
-		return false
+		return false, nil
 	}
 }

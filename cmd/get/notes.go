@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/global"
 	"github.com/olekukonko/tablewriter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -18,7 +19,16 @@ var notesCmd = &cobra.Command{
 		owner, _ := cmd.Flags().GetString("owner")
 		id, _ := cmd.Flags().GetInt("id")
 		name, _ := cmd.Flags().GetString("name")
-		var notes []db.Note = db.GetNotes(owner, id, name)
+		notes, err := global.DB.GetNotes(db.Note{
+			ID:   id,
+			Name: name,
+			User: db.User{
+				Username: owner,
+			},
+		})
+		if err != nil {
+			logrus.Fatal(err)
+		}
 		logrus.Debug("Retrieved list of notes")
 		var table *tablewriter.Table = tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"Id", "Name", "Owner"})

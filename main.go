@@ -6,12 +6,12 @@ package main
 
 import (
 	"github.com/monkeswag33/noter-go/cmd"
-	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/global"
 )
 
 func main() {
 	global.SetupViper()
-	db.InitDB(global.SetLogLevel()) // SetLogLevel returns gorm log level, which is passed to initdb
+	global.SetupDB()
 	cmd.Execute()
+	global.DB.Close()
 }

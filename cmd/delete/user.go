@@ -1,11 +1,11 @@
 package delete
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/errordef"
 	"github.com/monkeswag33/noter-go/global"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -28,15 +28,25 @@ var userCmd = &cobra.Command{
 			username = global.Prompt(promptui.Prompt{}, "Username:", deleteUserValidateUsername)
 		}
 		logrus.Debug("Username passed validation")
-		var deletedUser db.User = db.DeleteUser(username)
+		if err := global.DB.DeleteUser(db.User{
+			Username: username,
+		}); err != nil {
+			logrus.Fatal(err)
+		}
 		logrus.Info("Deleted user")
-		fmt.Printf("Deleted user %s\n", deletedUser.Username)
+		fmt.Printf("Deleted user %s\n", username)
 	},
 }
 
 func deleteUserValidateUsername(username string) error {
-	if !db.CheckUserExists(username) {
-		return errors.New("user does not exist")
+	exists, err := global.DB.CheckUserExists(db.User{
+		Username: username,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if !exists {
+		return errordef.ErrUserDoesntExist
 	}
 	return nil
 }

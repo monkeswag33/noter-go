@@ -1,10 +1,9 @@
 package describe
 
 import (
-	"errors"
-
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/errordef"
 	"github.com/monkeswag33/noter-go/global"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -26,7 +25,13 @@ var noteCmd = &cobra.Command{
 			}
 		}
 		logrus.Debug("Note name passed validation")
-		var note db.Note = db.GetNotes("", 0, noteName)[0]
+		notes, err := global.DB.GetNotes(db.Note{
+			Name: noteName,
+		})
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		var note db.Note = notes[0]
 		logrus.Debug("Received note")
 		printFormatted(note.Name, []string{"Id", "Name", "Body", "Owner"}, []interface{}{
 			note.ID,
@@ -38,8 +43,14 @@ var noteCmd = &cobra.Command{
 }
 
 func describeNoteValidateNote(noteName string) error {
-	if !db.CheckNoteExists(noteName) {
-		return errors.New("note does not exist")
+	exists, err := global.DB.CheckNoteExists(db.Note{
+		Name: noteName,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if !exists {
+		return errordef.ErrNoteDoesntExist
 	}
 	return nil
 }

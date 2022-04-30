@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/manifoldco/promptui"
+	database "github.com/monkeswag33/noter-go/db"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -14,6 +15,8 @@ var Templates *promptui.PromptTemplates = &promptui.PromptTemplates{
 	Invalid: "{{ . | red }} ",
 	Success: "{{ . | bold }} ",
 }
+
+var DB *database.DB
 
 func Prompt(config promptui.Prompt, label string, validator func(string) error) string {
 	config.Label = label
@@ -31,6 +34,13 @@ func SetupViper() {
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
 	viper.SetDefault("LOG_LEVEL", "warn")
+}
+
+func SetupDB() {
+	DB = &database.DB{
+		LogLevel: SetLogLevel(),
+	}
+	DB.Init()
 }
 
 func parseLogLevel() (string, string) {

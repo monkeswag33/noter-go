@@ -1,10 +1,9 @@
 package describe
 
 import (
-	"errors"
-
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/errordef"
 	"github.com/monkeswag33/noter-go/global"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -27,7 +26,13 @@ var userCmd = &cobra.Command{
 			username = global.Prompt(promptui.Prompt{}, "Username:", describeUserValidateUsername)
 		}
 		logrus.Debug("Username passed validation")
-		var user db.User = db.GetUsers(username, 0)[0]
+		users, err := global.DB.GetUsers(db.User{
+			Username: username,
+		})
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		var user db.User = users[0]
 		logrus.Debug("Received user")
 		printFormatted(username, []string{"Id", "Username"}, []interface{}{
 			user.ID,
@@ -37,8 +42,14 @@ var userCmd = &cobra.Command{
 }
 
 func describeUserValidateUsername(username string) error {
-	if !db.CheckUserExists(username) {
-		return errors.New("user does not exist")
+	exists, err := global.DB.CheckUserExists(db.User{
+		Username: username,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if !exists {
+		return errordef.ErrUserDoesntExist
 	}
 	return nil
 }

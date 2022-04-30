@@ -1,32 +1,17 @@
 package db
 
-func GetUsers(username string, id int) []User {
-	var whereClause User
-	if len(username) > 0 {
-		whereClause.Username = username
-	}
-	if id > 0 {
-		whereClause.ID = id
-	}
+func (db *DB) GetUsers(conditions User) ([]User, error) {
 	var users []User
-	db.Where(&whereClause).Find(&users)
-	return users
+	if err := db.DB.Where(&conditions).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
-func GetNotes(owner string, id int, name string) []Note {
-	var whereClause Note
-	var user User
-	if len(owner) > 0 {
-		db.Find(&user, "username = ?", owner)
-		whereClause.UserID = user.ID
-	}
-	if id > 0 {
-		whereClause.ID = id
-	}
-	if len(name) > 0 {
-		whereClause.Name = name
-	}
+func (db *DB) GetNotes(conditions Note) ([]Note, error) {
 	var notes []Note
-	db.Preload("User").Where(&whereClause).Find(&notes)
-	return notes
+	if err := db.DB.Preload("User").Where(&conditions).Find(&notes).Error; err != nil {
+		return nil, err
+	}
+	return notes, nil
 }

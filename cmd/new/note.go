@@ -35,6 +35,10 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			logrus.Fatal(err)
 		}
+		if err := global.DB.CreateNote(&note); err != nil {
+			logrus.Fatal(err)
+		}
+		logrus.Info("Inserted note")
 		fmt.Printf("Created note %q\n", note.Name)
 	},
 }
@@ -65,25 +69,19 @@ func createNote(args []string, username string, body string) (db.Note, error) {
 	} else {
 		logrus.Debug("Body given as parameter, using it")
 	}
-	note, err := db.CreateNote(name, body, username)
-	logrus.Info("Created note")
-	if err != nil {
-		return db.Note{}, err
+	var note db.Note = db.Note{
+		Name: name,
+		Body: body,
+		User: db.User{
+			Username: username,
+		},
 	}
+	logrus.Info("Created note")
 	return note, nil
 }
 
 func init() {
 	NewCmd.AddCommand(noteCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// noteCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
 	noteCmd.Flags().StringP("user", "u", "", "User that the note will be added to")
 	noteCmd.Flags().StringP("body", "b", "", "Body of note")
 }
@@ -111,14 +109,26 @@ func newNoteValidateNoteName(noteName string) error {
 	if len(noteName) < 5 {
 		return errordef.ErrNoteNameTooShort
 	}
-	if db.CheckNoteExists(noteName) {
+	exists, err := global.DB.CheckNoteExists(db.Note{
+		Name: noteName,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if exists {
 		return errordef.ErrNoteAlreadyExists
 	}
 	return nil
 }
 
 func newNoteValidateUsername(username string) error {
-	if !db.CheckUserExists(username) {
+	exists, err := global.DB.CheckUserExists(db.User{
+		Username: username,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if !exists {
 		return errordef.ErrUserDoesntExist
 	}
 	return nil
