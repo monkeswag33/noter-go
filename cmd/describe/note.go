@@ -25,7 +25,7 @@ var noteCmd = &cobra.Command{
 			}
 		}
 		logrus.Debug("Note name passed validation")
-		notes, err := global.DB.GetNotes(db.Note{
+		notes, err := database.GetNotes(db.Note{
 			Name: noteName,
 		})
 		if err != nil {
@@ -43,7 +43,7 @@ var noteCmd = &cobra.Command{
 }
 
 func describeNoteValidateNote(noteName string) error {
-	exists, err := global.DB.CheckNoteExists(db.Note{
+	exists, err := database.CheckNoteExists(db.Note{
 		Name: noteName,
 	})
 	if err != nil {

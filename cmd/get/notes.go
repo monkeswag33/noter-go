@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/monkeswag33/noter-go/db"
-	"github.com/monkeswag33/noter-go/global"
 	"github.com/olekukonko/tablewriter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -19,7 +18,7 @@ var notesCmd = &cobra.Command{
 		owner, _ := cmd.Flags().GetString("owner")
 		id, _ := cmd.Flags().GetInt("id")
 		name, _ := cmd.Flags().GetString("name")
-		notes, err := global.DB.GetNotes(db.Note{
+		notes, err := database.GetNotes(db.Note{
 			ID:   id,
 			Name: name,
 			User: db.User{

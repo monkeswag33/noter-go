@@ -28,7 +28,7 @@ var noteCmd = &cobra.Command{
 			noteName = global.Prompt(promptui.Prompt{}, "Note name:", deleteNoteValidateNoteName)
 		}
 		logrus.Debug("Username passed validation")
-		if err := global.DB.DeleteNote(db.Note{
+		if err := database.DeleteNote(db.Note{
 			Name: noteName,
 		}); err != nil {
 			logrus.Fatal(err)
@@ -43,7 +43,7 @@ func init() {
 }
 
 func deleteNoteValidateNoteName(noteName string) error {
-	exists, err := global.DB.CheckNoteExists(db.Note{
+	exists, err := database.CheckNoteExists(db.Note{
 		Name: noteName,
 	})
 	if err != nil {

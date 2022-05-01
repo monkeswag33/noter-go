@@ -35,10 +35,9 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		if err := global.DB.CreateNote(&note); err != nil {
+		if err := insertNote(&note); err != nil {
 			logrus.Fatal(err)
 		}
-		logrus.Info("Inserted note")
 		fmt.Printf("Created note %q\n", note.Name)
 	},
 }
@@ -80,6 +79,14 @@ func createNote(args []string, username string, body string) (db.Note, error) {
 	return note, nil
 }
 
+func insertNote(note *db.Note) error {
+	if err := database.CreateNote(note); err != nil {
+		return err
+	}
+	logrus.Info("Inserted note")
+	return nil
+}
+
 func init() {
 	NewCmd.AddCommand(noteCmd)
 	noteCmd.Flags().StringP("user", "u", "", "User that the note will be added to")
@@ -109,7 +116,7 @@ func newNoteValidateNoteName(noteName string) error {
 	if len(noteName) < 5 {
 		return errordef.ErrNoteNameTooShort
 	}
-	exists, err := global.DB.CheckNoteExists(db.Note{
+	exists, err := database.CheckNoteExists(db.Note{
 		Name: noteName,
 	})
 	if err != nil {
@@ -122,7 +129,7 @@ func newNoteValidateNoteName(noteName string) error {
 }
 
 func newNoteValidateUsername(username string) error {
-	exists, err := global.DB.CheckUserExists(db.User{
+	exists, err := database.CheckUserExists(db.User{
 		Username: username,
 	})
 	if err != nil {

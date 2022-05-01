@@ -1,6 +1,12 @@
 package delete
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/global"
+	"github.com/spf13/cobra"
+)
+
+var database *db.DB = global.DB
 
 var DeleteCmd = &cobra.Command{
 	Use:   "delete",

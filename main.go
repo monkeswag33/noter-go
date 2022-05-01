@@ -13,5 +13,5 @@ func main() {
 	global.SetupViper()
 	global.SetupDB()
 	cmd.Execute()
-	global.DB.Close()
+	global.ShutdownDB()
 }

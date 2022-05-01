@@ -46,7 +46,7 @@ to quickly create a Cobra application.`,
 			logrus.Fatal(err)
 		}
 		fmt.Println(user)
-		if err := global.DB.CreateUser(user); err != nil {
+		if err := database.CreateUser(user); err != nil {
 			logrus.Fatal(err)
 		}
 		fmt.Println(user)
@@ -96,7 +96,7 @@ func newUserValidateUsername(username string) error {
 	if !regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString(username) {
 		return errordef.ErrUsernameMustContainAlphaNumeric
 	}
-	exists, err := global.DB.CheckUserExists(db.User{
+	exists, err := database.CheckUserExists(db.User{
 		Username: username,
 	})
 	if err != nil {

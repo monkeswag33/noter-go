@@ -5,8 +5,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package new
 
 import (
+	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/global"
 	"github.com/spf13/cobra"
 )
+
+var database *db.DB = global.DB
 
 // newCmd represents the new command
 var NewCmd = &cobra.Command{

@@ -2,6 +2,11 @@ package new
 
 import (
 	"testing"
+	"time"
+
+	"github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/global"
+	"github.com/stretchr/testify/assert"
 )
 
 type noteValidatationTester struct {
@@ -12,22 +17,36 @@ type noteValidatationTester struct {
 }
 
 func TestCreateNote(t *testing.T) {
+	global.InitTesterDB()
+	defer global.ShutdownDB()
 	// Create user
-	// _, username := "Testing Create Note", "testcreatenote"
-	// db.CreateUser(username, password)
-	// fmt.Println(db.CheckUserExists(username))
-	// note, err := createNote([]string{noteName}, username, noteBody)
-	// if err != nil {
-	// 	t.Fatal(err)
-	// }
-	// assert.Equal(t, username, note.User.Username)
-	// assert.Equal(t, noteName, note.Name)
-	// assert.Equal(t, noteBody, note.Body)
-	// db.DeleteUser(username)
-	// assert.False(t, db.CheckUserExists("ishank"))
+	noteName, username := "Testing Create Note", "testcreatenote"
+	var user db.User = db.User{
+		Username: username,
+		Password: password,
+	}
+	assert.NoError(t, database.CreateUser(&user))
+	exists, err := database.CheckUserExists(db.User{
+		Username: username,
+	})
+	assert.NoError(t, err)
+	assert.True(t, exists)
+	note, err := createNote([]string{noteName}, username, noteBody)
+	assert.NoError(t, err)
+	assert.NoError(t, insertNote(&note))
+	assert.Equal(t, username, note.User.Username)
+	assert.Equal(t, noteName, note.Name)
+	assert.Equal(t, noteBody, note.Body)
 }
 
 func TestNoteValidator(t *testing.T) {
+	global.InitTesterDB()
+	time.Sleep(2 * time.Second)
+	exists, err := database.CheckUserExists(db.User{
+		Username: "testcreatenote",
+	})
+	assert.NoError(t, err)
+	assert.True(t, exists)
 	// noteName, username := "Testing Note Name Validator", "testnotenamevalidator"
 	// db.CreateUser(username, password)
 	// if _, err := createNote([]string{noteName}, username, noteBody); err != nil {

@@ -28,7 +28,7 @@ var userCmd = &cobra.Command{
 			username = global.Prompt(promptui.Prompt{}, "Username:", deleteUserValidateUsername)
 		}
 		logrus.Debug("Username passed validation")
-		if err := global.DB.DeleteUser(db.User{
+		if err := database.DeleteUser(db.User{
 			Username: username,
 		}); err != nil {
 			logrus.Fatal(err)
@@ -39,7 +39,7 @@ var userCmd = &cobra.Command{
 }
 
 func deleteUserValidateUsername(username string) error {
-	exists, err := global.DB.CheckUserExists(db.User{
+	exists, err := database.CheckUserExists(db.User{
 		Username: username,
 	})
 	if err != nil {

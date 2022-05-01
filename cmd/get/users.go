@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/monkeswag33/noter-go/db"
-	"github.com/monkeswag33/noter-go/global"
 	"github.com/olekukonko/tablewriter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -18,7 +17,7 @@ var usersCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		username, _ := cmd.Flags().GetString("username")
 		id, _ := cmd.Flags().GetInt("id")
-		users, err := global.DB.GetUsers(db.User{
+		users, err := database.GetUsers(db.User{
 			Username: username,
 			ID:       id,
 		})
