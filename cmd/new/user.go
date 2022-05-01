@@ -5,8 +5,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package new
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"fmt"
 	"regexp"
 
@@ -17,17 +15,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	passwordvalidator "github.com/wagslane/go-password-validator"
-	"golang.org/x/crypto/argon2"
 )
 
-const (
-	memory         uint32  = 64 * 1024
-	iterations     uint32  = 3
-	parallelism    uint8   = 2
-	saltLength     uint32  = 16
-	keyLength      uint32  = 32
-	minEntropyBits float64 = 60
-)
+const minEntropyBits float64 = 60
 
 // new/userCmd represents the new/user command
 var userCmd = &cobra.Command{
@@ -45,11 +35,9 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		fmt.Println(user)
-		if err := database.CreateUser(user); err != nil {
+		if err := insertUser(user); err != nil {
 			logrus.Fatal(err)
 		}
-		fmt.Println(user)
 		fmt.Printf("Created user %s\n", user.Username)
 	},
 }
@@ -76,7 +64,13 @@ func createUser(args []string, password string) (*db.User, error) {
 		return nil, err
 	}
 	logrus.Debug("Password passed validation")
-	hash, err := hashPass(password)
+	hash, err := global.HashPass(password, &global.HashParams{
+		Memory:      64 * 1024,
+		Iterations:  4,
+		Parallelism: 2,
+		SaltLength:  16,
+		KeyLength:   32,
+	})
 	logrus.Debug("Password hashed...")
 	if err != nil {
 		return nil, err
@@ -87,6 +81,13 @@ func createUser(args []string, password string) (*db.User, error) {
 	}
 	logrus.Info("Created user")
 	return &user, nil
+}
+
+func insertUser(user *db.User) error {
+	if err := database.CreateUser(user); err != nil {
+		return err
+	}
+	return nil
 }
 
 func newUserValidateUsername(username string) error {
@@ -121,35 +122,4 @@ func newUserValidatePassword(password string) error {
 func init() {
 	NewCmd.AddCommand(userCmd)
 	userCmd.Flags().StringP("password", "p", "", "Password for new user")
-}
-
-func hashPass(password string) (encodedHash string, err error) {
-	salt, err := genSalt()
-	if err != nil {
-		return "", err
-	}
-	logrus.Tracef("Generated salt %d bytes long", saltLength)
-
-	var hash []byte = argon2.IDKey([]byte(password),
-		salt,
-		iterations,
-		memory,
-		parallelism,
-		keyLength)
-	logrus.Trace("Hashed password using argon2 to bytes")
-	var b64Salt string = base64.RawStdEncoding.EncodeToString(salt)
-	var b64Hash string = base64.RawStdEncoding.EncodeToString(hash)
-	logrus.Trace("Converted salt and hash to strings")
-	encodedHash = fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, memory, iterations, parallelism, b64Salt, b64Hash)
-	logrus.Trace("Generated string hash")
-	return encodedHash, nil
-}
-
-func genSalt() ([]byte, error) {
-	bytes := make([]byte, saltLength)
-	_, err := rand.Read(bytes)
-	if err != nil {
-		return nil, err
-	}
-	return bytes, nil
 }

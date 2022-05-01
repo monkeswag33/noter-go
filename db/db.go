@@ -41,12 +41,10 @@ func (db *DB) getLogLevel() logger.Interface {
 		loggerLevel = logger.Error
 	case "silent", "fatal": // Gorm log level silent, or logrus log level fatal
 		loggerLevel = logger.Silent
-	default:
-		logrus.Warnf("Unrecognized gorm log level %q, using default value WARN", db.LogLevel)
-		loggerLevel = logger.Warn
 	}
-	db.LogLevel = "test"
-	return logger.Default.LogMode(loggerLevel) // This will never be called, just here to stop go from complaining about return types
+	logrus.Warnf("Unrecognized gorm log level %q, using default value WARN", db.LogLevel)
+	loggerLevel = logger.Warn
+	return logger.Default.LogMode(loggerLevel)
 }
 
 func (db *DB) Init() {

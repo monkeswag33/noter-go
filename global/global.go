@@ -4,11 +4,8 @@ import (
 	"log"
 
 	"github.com/manifoldco/promptui"
-	database "github.com/monkeswag33/noter-go/db"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 var Templates *promptui.PromptTemplates = &promptui.PromptTemplates{
@@ -17,8 +14,6 @@ var Templates *promptui.PromptTemplates = &promptui.PromptTemplates{
 	Invalid: "{{ . | red }} ",
 	Success: "{{ . | bold }} ",
 }
-
-var DB *database.DB
 
 func Prompt(config promptui.Prompt, label string, validator func(string) error) string {
 	config.Label = label
@@ -36,13 +31,6 @@ func SetupViper() {
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
 	viper.SetDefault("LOG_LEVEL", "warn")
-}
-
-func SetupDB() {
-	DB = &database.DB{
-		LogLevel: SetLogLevel(),
-	}
-	DB.Init()
 }
 
 func parseLogLevel() (string, string) {
@@ -65,23 +53,4 @@ func SetLogLevel() string {
 	logrus.Info("Set log level...")
 	logrus.Debugf("Log level is: %q", logLevel)
 	return gormLogLevel
-}
-
-func InitTesterDB() *database.DB {
-	var location string = "file::memory:?cache=shared" // Specify location to be in-memory
-	gormDB, err := gorm.Open(sqlite.Open(location), &gorm.Config{})
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	var db database.DB = database.DB{
-		LogLevel: "warn",
-		DB:       gormDB,
-	}
-	db.Init()
-	return &db
-}
-
-func ShutdownDB() {
-	DB.Close()
-	DB = nil
 }

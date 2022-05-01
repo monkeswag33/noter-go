@@ -13,3 +13,6 @@ var ErrUserDoesntExist error = errors.New("user doesn't exist")
 var ErrNoteDoesntExist error = errors.New("note doesn't exist")
 
 var ErrUsernameMustContainAlphaNumeric error = errors.New("username can only contain alphanumeric characters")
+
+var ErrArgon2InvalidHash error = errors.New("hash is invalid")
+var ErrArgon2IncompatibleVersion error = errors.New("argon2 version is incompatible")
