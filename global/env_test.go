@@ -10,17 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	logLevels [6]string = [...]string{
-		"trace", "debug", "info",
-		"warn", "error", "fatal",
-	}
-
-	gormLogLevels [4]string = [...]string{
-		"info", "warn", "error", "silent",
-	}
-)
-
 func TestViperSetup(t *testing.T) {
 	var filename string = ".env"
 	file, err := os.Create(filename)
@@ -43,8 +32,8 @@ func TestParseLogLevel(t *testing.T) {
 	if exists {
 		defer assert.NoError(t, os.Setenv("GORM_LOG_LEVEL", val))
 	}
-	for _, logLevel := range logLevels {
-		for _, gormLogLevel := range gormLogLevels {
+	for logLevel := range types.LogLevels {
+		for gormLogLevel := range types.GormLogLevels {
 			assert.NoError(t, os.Setenv("LOG_LEVEL", logLevel))
 			assert.NoError(t, os.Setenv("GORM_LOG_LEVEL", gormLogLevel))
 			assert.Equal(t, ParseLogLevel(), types.LogLevelParams{
@@ -56,7 +45,7 @@ func TestParseLogLevel(t *testing.T) {
 }
 
 func TestSetLogLevel(t *testing.T) {
-	for _, logLevel := range logLevels {
+	for logLevel := range types.LogLevels {
 		var logLevelParams types.LogLevelParams = types.LogLevelParams{
 			LogLevel: logLevel,
 		}

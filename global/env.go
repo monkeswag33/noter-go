@@ -30,12 +30,14 @@ func ParseLogLevel() types.LogLevelParams {
 }
 
 func SetLogLevel(params types.LogLevelParams) error {
+	var ll logrus.Level
 	ll, err := logrus.ParseLevel(params.LogLevel)
 	if err != nil {
-		return err
+		logrus.Warnf("Unrecognized log level %q, using default value WARN", params.LogLevel)
+		ll = logrus.WarnLevel
 	}
 	logrus.SetLevel(ll)
 	logrus.Info("Set log level...")
-	logrus.Debugf("Log level is: %q", params.LogLevel)
+	logrus.Debugf("Log level: %q", ll.String())
 	return nil
 }
