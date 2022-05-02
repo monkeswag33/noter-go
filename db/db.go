@@ -3,6 +3,7 @@ package db
 import (
 	"strings"
 
+	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
@@ -26,16 +27,16 @@ type User struct {
 
 type DB struct {
 	DB       *gorm.DB
-	LogLevel string
+	LogLevel types.LogLevelParams
 }
 
 func (db *DB) getLogLevel() logger.Interface {
 	var loggerLevel logger.LogLevel
 	logrus.Debugf("GORM logging level is: %q", db.LogLevel)
-	switch strings.ToLower(db.LogLevel) {
+	switch strings.ToLower(db.LogLevel.GormLogLevel) {
 	case "trace", "debug", "info":
 		loggerLevel = logger.Info
-	case "warn", "":
+	case "warn":
 		loggerLevel = logger.Warn
 	case "error":
 		loggerLevel = logger.Error

@@ -12,6 +12,7 @@ import (
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/errordef"
 	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	passwordvalidator "github.com/wagslane/go-password-validator"
@@ -64,7 +65,7 @@ func createUser(args []string, password string) (*db.User, error) {
 		return nil, err
 	}
 	logrus.Debug("Password passed validation")
-	hash, err := global.HashPass(password, &global.HashParams{
+	hash, err := global.HashPass(password, &types.HashParams{
 		Memory:      64 * 1024,
 		Iterations:  4,
 		Parallelism: 2,

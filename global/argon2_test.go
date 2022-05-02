@@ -3,11 +3,12 @@ package global
 import (
 	"testing"
 
+	"github.com/monkeswag33/noter-go/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHash(t *testing.T) {
-	hash, err := HashPass("password", &HashParams{
+	hash, err := HashPass("password", &types.HashParams{
 		Memory:      64 * 1024,
 		Iterations:  4,
 		Parallelism: 2,

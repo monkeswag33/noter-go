@@ -2,6 +2,7 @@ package global
 
 import (
 	database "github.com/monkeswag33/noter-go/db"
+	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -14,8 +15,11 @@ func InitTesterDB() *database.DB {
 		logrus.Fatal(err)
 	}
 	var db database.DB = database.DB{
-		LogLevel: "warn",
-		DB:       gormDB,
+		LogLevel: types.LogLevelParams{
+			LogLevel:     "warn",
+			GormLogLevel: "warn",
+		},
+		DB: gormDB,
 	}
 	db.Init()
 	return &db

@@ -8,19 +8,12 @@ import (
 	"strings"
 
 	"github.com/monkeswag33/noter-go/errordef"
+	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/argon2"
 )
 
-type HashParams struct {
-	Memory      uint32
-	Iterations  uint32
-	Parallelism uint8
-	SaltLength  uint32
-	KeyLength   uint32
-}
-
-func HashPass(password string, params *HashParams) (encodedHash string, err error) {
+func HashPass(password string, params *types.HashParams) (encodedHash string, err error) {
 	salt, err := genSalt(params.SaltLength)
 	if err != nil {
 		return "", err
@@ -65,7 +58,7 @@ func VerifyPass(password, encodedHash string) (match bool, err error) {
 	return false, nil
 }
 
-func decodeHash(encodedHash string) (params *HashParams, salt, hash []byte, err error) {
+func decodeHash(encodedHash string) (params *types.HashParams, salt, hash []byte, err error) {
 	vals := strings.Split(encodedHash, "$")
 	if len(vals) != 6 {
 		return nil, nil, nil, errordef.ErrArgon2InvalidHash
@@ -80,7 +73,7 @@ func decodeHash(encodedHash string) (params *HashParams, salt, hash []byte, err 
 		return nil, nil, nil, errordef.ErrArgon2IncompatibleVersion
 	}
 
-	params = &HashParams{}
+	params = &types.HashParams{}
 	_, err = fmt.Sscanf(vals[3], "m=%d,t=%d,p=%d", &params.Memory, &params.Iterations, &params.Parallelism)
 	if err != nil {
 		return nil, nil, nil, err

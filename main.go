@@ -7,10 +7,13 @@ package main
 import (
 	"github.com/monkeswag33/noter-go/cmd"
 	"github.com/monkeswag33/noter-go/global"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	global.SetupViper()
+	if err := global.SetupViper(); err != nil {
+		logrus.Fatal(err)
+	}
 	global.SetupDB()
 	cmd.Execute()
 	global.ShutdownDB()
