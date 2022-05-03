@@ -16,3 +16,6 @@ var ErrUsernameMustContainAlphaNumeric error = errors.New("username can only con
 
 var ErrArgon2InvalidHash error = errors.New("hash is invalid")
 var ErrArgon2IncompatibleVersion error = errors.New("argon2 version is incompatible")
+
+var ErrCouldNotFindPostgresURI error = errors.New("could not find postgres uri environment variable")
+var ErrFailedToConnect error = errors.New("failed to connect to database")

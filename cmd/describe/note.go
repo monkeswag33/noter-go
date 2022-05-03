@@ -14,6 +14,7 @@ var noteCmd = &cobra.Command{
 	Short: "Describe a specific note",
 	Long:  "Get all the information about a specific note",
 	Run: func(cmd *cobra.Command, args []string) {
+		database = db.Database
 		var noteName string
 		if len(args) != 1 {
 			logrus.Debug("Note name not found, prompting")

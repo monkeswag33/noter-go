@@ -4,7 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/db"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -13,9 +14,17 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	database = global.InitTesterDB()
-	database.Init()
+	var err error
+	database, err = db.InitTesterDB()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if err := database.Init(); err != nil {
+		logrus.Fatal(err)
+	}
 	code := m.Run()
-	database.Close()
+	if err := database.Close(); err != nil {
+		logrus.Fatal(err)
+	}
 	os.Exit(code)
 }

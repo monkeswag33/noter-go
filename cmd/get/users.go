@@ -15,6 +15,7 @@ var usersCmd = &cobra.Command{
 	Short: "Command to get all users",
 	Long:  "Command to get all users",
 	Run: func(cmd *cobra.Command, args []string) {
+		database = db.Database
 		username, _ := cmd.Flags().GetString("username")
 		id, _ := cmd.Flags().GetInt("id")
 		users, err := database.GetUsers(db.User{

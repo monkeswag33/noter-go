@@ -14,6 +14,7 @@ var userCmd = &cobra.Command{
 	Short: "Describe a specific user",
 	Long:  "Get all the information about a specific user",
 	Run: func(cmd *cobra.Command, args []string) {
+		database = db.Database
 		var username string
 		if len(args) == 1 {
 			logrus.Debug("Username recognized as argument, using it")

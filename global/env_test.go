@@ -45,13 +45,11 @@ func TestParseLogLevel(t *testing.T) {
 }
 
 func TestSetLogLevel(t *testing.T) {
-	for logLevel := range types.LogLevels {
+	for logLevel, lvl := range types.LogLevels {
 		var logLevelParams types.LogLevelParams = types.LogLevelParams{
 			LogLevel: logLevel,
 		}
 		assert.NoError(t, SetLogLevel(logLevelParams))
-		lvl, err := logrus.ParseLevel(logLevel)
-		assert.NoError(t, err)
 		assert.Equal(t, logrus.GetLevel(), lvl)
 	}
 }

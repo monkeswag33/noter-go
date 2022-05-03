@@ -15,6 +15,7 @@ var notesCmd = &cobra.Command{
 	Short: "Command to get all notes",
 	Long:  "Command to get all notes",
 	Run: func(cmd *cobra.Command, args []string) {
+		database = db.Database
 		owner, _ := cmd.Flags().GetString("owner")
 		id, _ := cmd.Flags().GetInt("id")
 		name, _ := cmd.Flags().GetString("name")

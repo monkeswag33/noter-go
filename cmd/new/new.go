@@ -6,11 +6,10 @@ package new
 
 import (
 	"github.com/monkeswag33/noter-go/db"
-	"github.com/monkeswag33/noter-go/global"
 	"github.com/spf13/cobra"
 )
 
-var database *db.DB = global.DB
+var database *db.DB
 
 // newCmd represents the new command
 var NewCmd = &cobra.Command{

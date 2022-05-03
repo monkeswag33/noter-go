@@ -16,6 +16,7 @@ var userCmd = &cobra.Command{
 	Short: "Delete a user",
 	Long:  "Delete a specific user by username as the first",
 	Run: func(cmd *cobra.Command, args []string) {
+		database = db.Database
 		var username string
 		if len(args) == 1 {
 			logrus.Debug("Username recognized as argument, using it")

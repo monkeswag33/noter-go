@@ -2,11 +2,10 @@ package describe
 
 import (
 	"github.com/monkeswag33/noter-go/db"
-	"github.com/monkeswag33/noter-go/global"
 	"github.com/spf13/cobra"
 )
 
-var database *db.DB = global.DB
+var database *db.DB
 
 var DescribeCmd = &cobra.Command{
 	Use:   "describe",

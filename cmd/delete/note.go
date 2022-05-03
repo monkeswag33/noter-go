@@ -16,6 +16,7 @@ var noteCmd = &cobra.Command{
 	Short: "Delete note",
 	Long:  "Delete a note by name",
 	Run: func(cmd *cobra.Command, args []string) {
+		database = db.Database
 		var noteName string
 		if len(args) == 1 {
 			logrus.Debug("Note name recognized as argument, using it")

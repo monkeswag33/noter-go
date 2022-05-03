@@ -6,6 +6,7 @@ package main
 
 import (
 	"github.com/monkeswag33/noter-go/cmd"
+	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/global"
 	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
@@ -19,7 +20,11 @@ func main() {
 	if err := global.SetLogLevel(logLevel); err != nil {
 		logrus.Fatal(err)
 	}
-	global.SetupDB(logLevel)
+	if err := db.SetupDB(logLevel); err != nil {
+		logrus.Fatal(err)
+	}
 	cmd.Execute()
-	global.ShutdownDB()
+	if err := db.ShutdownDB(); err != nil {
+		logrus.Fatal(err)
+	}
 }
