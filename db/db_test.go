@@ -12,18 +12,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func changeDir(location string) string {
+var user User = User{
+	Username: "user",
+	Password: "password",
+}
+
+var note Note = Note{
+	Name: "test",
+	Body: "test",
+}
+
+func changeDir(location string) error {
 	_, current, _, _ := runtime.Caller(0)
 	down := path.Join(path.Dir(current), location)
 	if err := os.Chdir(down); err != nil {
-		logrus.Fatal(err)
+		return err
 	}
-	current, _ = os.Getwd()
-	return current
+	return nil
 }
 
 func TestMain(m *testing.M) {
-	changeDir("..")
+	if err := changeDir(".."); err != nil {
+		logrus.Fatal(err)
+	}
 	code := m.Run()
 	os.Exit(code)
 }

@@ -1,42 +1,33 @@
 package db
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var user User = User{
-	Username: "user",
-	Password: "password",
-}
-
-var note Note = Note{
-	Name: "test",
-	Body: "test",
-	User: User{
-		Username: "user",
-	},
-}
-
 func TestGetUsers(t *testing.T) {
+	var clonedUser User = user
 	database, err := InitTesterDB()
 	assert.NoError(t, err)
-	assert.NoError(t, database.DB.Create(&user).Error)
+	assert.NoError(t, database.DB.Create(&clonedUser).Error)
 	getUsers, err := database.GetUsers(User{})
 	assert.NoError(t, err)
 	var getUser User = getUsers[0]
-	assert.EqualValues(t, user, getUser)
+	assert.EqualValues(t, clonedUser, getUser)
 }
 
 func TestGetNotes(t *testing.T) {
+	var clonedUser User = user
+	var clonedNote Note = note
 	database, err := InitTesterDB()
 	assert.NoError(t, err)
-	assert.NoError(t, database.DB.Create(&user).Error)
-	assert.NoError(t, database.DB.Create(&note).Error)
+	assert.NoError(t, err)
+	assert.NoError(t, database.CreateUser(&clonedUser))
+	clonedNote.User = clonedUser
+	assert.NoError(t, database.CreateNote(&clonedNote))
 	getNotes, err := database.GetNotes(Note{})
 	assert.NoError(t, err)
-	var getNote Note = getNotes[0]
-	fmt.Println(getNote.Name)
+	assert.Len(t, getNotes, 1)
+	assert.EqualValues(t, clonedNote, getNotes[0])
 }

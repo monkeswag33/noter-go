@@ -16,19 +16,20 @@ var notesCmd = &cobra.Command{
 	Long:  "Command to get all notes",
 	Run: func(cmd *cobra.Command, args []string) {
 		database = db.Database
-		owner, _ := cmd.Flags().GetString("owner")
-		id, _ := cmd.Flags().GetInt("id")
-		name, _ := cmd.Flags().GetString("name")
-		notes, err := database.GetNotes(db.Note{
-			ID:   id,
-			Name: name,
-			User: db.User{
-				Username: owner,
-			},
-		})
+		// owner, _ := cmd.Flags().GetString("owner")
+		// id, _ := cmd.Flags().GetInt("id")
+		// name, _ := cmd.Flags().GetString("name")
+		notes, err := database.GetNotes( /*db.Note{
+				ID:   id,
+				Name: name,
+				User: db.User{
+					Username: owner,
+				},
+			}*/db.Note{})
 		if err != nil {
 			logrus.Fatal(err)
 		}
+		fmt.Println(notes)
 		logrus.Debug("Retrieved list of notes")
 		var table *tablewriter.Table = tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"Id", "Name", "Owner"})
