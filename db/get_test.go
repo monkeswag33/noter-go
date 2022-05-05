@@ -23,9 +23,9 @@ func TestGetNotes(t *testing.T) {
 	database, err := InitTesterDB()
 	assert.NoError(t, err)
 	assert.NoError(t, err)
-	assert.NoError(t, database.CreateUser(&clonedUser))
+	assert.NoError(t, database.DB.Create(&clonedUser).Error)
 	clonedNote.User = clonedUser
-	assert.NoError(t, database.CreateNote(&clonedNote))
+	assert.NoError(t, database.DB.Create(&clonedNote).Error)
 	getNotes, err := database.GetNotes(Note{})
 	assert.NoError(t, err)
 	assert.Len(t, getNotes, 1)

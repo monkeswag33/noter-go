@@ -22,6 +22,9 @@ var note Note = Note{
 	Body: "test",
 }
 
+// "go test" by default will run tests in subdirectory
+// However, this means that the script cannot access the .env file
+// The changeDir will move the current directory down so that it can access the .env file
 func changeDir(location string) error {
 	_, current, _, _ := runtime.Caller(0)
 	down := path.Join(path.Dir(current), location)
