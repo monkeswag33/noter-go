@@ -25,5 +25,5 @@ jobs:
       - name: Run tests
         run: |
           pwd
-          dir
+          ls
           go test `go list ./... | grep -v db`
