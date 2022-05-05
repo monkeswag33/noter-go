@@ -7,17 +7,17 @@ package main
 import (
 	"github.com/monkeswag33/noter-go/cmd"
 	"github.com/monkeswag33/noter-go/db"
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/env"
 	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	if err := global.SetupViper(); err != nil {
+	if err := env.SetupViper(); err != nil {
 		logrus.Fatal(err)
 	}
-	var logLevel types.LogLevelParams = global.ParseLogLevel()
-	if err := global.SetLogLevel(logLevel); err != nil {
+	var logLevel types.LogLevelParams = env.ParseLogLevel()
+	if err := env.SetLogLevel(logLevel); err != nil {
 		logrus.Fatal(err)
 	}
 	if err := db.SetupDB(logLevel); err != nil {

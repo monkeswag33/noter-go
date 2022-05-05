@@ -13,7 +13,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/errordef"
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -52,12 +52,12 @@ func createNote(args []string, username string, body string) (*db.Note, error) {
 			return nil, err
 		}
 	} else {
-		name = global.Prompt(promptui.Prompt{}, "Note name:", newNoteValidateNoteName)
+		name = prompt.Prompt(promptui.Prompt{}, "Note name:", newNoteValidateNoteName)
 	}
 	logrus.Debug("Note name passed validation")
 	if len(username) == 0 {
 		logrus.Debug("Username not given as parameter, prompting for it")
-		username = global.Prompt(promptui.Prompt{}, "User note belongs to?", newNoteValidateUsername)
+		username = prompt.Prompt(promptui.Prompt{}, "User note belongs to?", newNoteValidateUsername)
 	} else if err := newNoteValidateUsername(username); err != nil {
 		return nil, err
 	}

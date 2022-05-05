@@ -9,9 +9,10 @@ import (
 	"regexp"
 
 	"github.com/manifoldco/promptui"
+	"github.com/monkeswag33/noter-go/argon2"
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/errordef"
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/prompt"
 	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -54,19 +55,19 @@ func createUser(args []string, password string) (*db.User, error) {
 		}
 	} else {
 		logrus.Debug("Username was not given, prompting for it")
-		username = global.Prompt(promptui.Prompt{}, "Username:", newUserValidateUsername)
+		username = prompt.Prompt(promptui.Prompt{}, "Username:", newUserValidateUsername)
 	}
 	logrus.Debug("Username passed validation")
 	if len(password) == 0 {
 		logrus.Debug("Password was not given as parameter, prompting for it")
-		password = global.Prompt(promptui.Prompt{
+		password = prompt.Prompt(promptui.Prompt{
 			Mask: '*',
 		}, "Password:", newUserValidatePassword)
 	} else if err := newUserValidatePassword(password); err != nil {
 		return nil, err
 	}
 	logrus.Debug("Password passed validation")
-	hash, err := global.HashPass(password, &types.HashParams{
+	hash, err := argon2.HashPass(password, &types.HashParams{
 		Memory:      64 * 1024,
 		Iterations:  4,
 		Parallelism: 2,

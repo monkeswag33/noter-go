@@ -4,7 +4,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/errordef"
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +18,7 @@ var noteCmd = &cobra.Command{
 		var noteName string
 		if len(args) != 1 {
 			logrus.Debug("Note name not found, prompting")
-			noteName = global.Prompt(promptui.Prompt{}, "Note name:", describeNoteValidateNote)
+			noteName = prompt.Prompt(promptui.Prompt{}, "Note name:", describeNoteValidateNote)
 		} else {
 			noteName = args[0]
 			if err := describeNoteValidateNote(noteName); err != nil {

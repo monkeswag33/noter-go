@@ -6,7 +6,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/errordef"
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/prompt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -26,7 +26,7 @@ var userCmd = &cobra.Command{
 			}
 		} else {
 			logrus.Debug("Username not found, prompting")
-			username = global.Prompt(promptui.Prompt{}, "Username:", deleteUserValidateUsername)
+			username = prompt.Prompt(promptui.Prompt{}, "Username:", deleteUserValidateUsername)
 		}
 		logrus.Debug("Username passed validation")
 		if err := database.DeleteUser(db.User{

@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/monkeswag33/noter-go/global"
+	"github.com/monkeswag33/noter-go/env"
 	"github.com/monkeswag33/noter-go/types"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -54,7 +54,7 @@ func TestInitTesterDB(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	global.SetupViper()
+	env.SetupViper()
 	var database DB = DB{
 		LogLevel: types.LogLevelParams{
 			GormLogLevel: "warn",
@@ -66,7 +66,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestSetupDB(t *testing.T) {
-	global.SetupViper()
+	env.SetupViper()
 	assert.NoError(t, SetupDB(types.LogLevelParams{
 		GormLogLevel: "warn",
 	}))

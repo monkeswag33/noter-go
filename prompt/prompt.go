@@ -1,4 +1,4 @@
-package global
+package prompt
 
 import (
 	"github.com/manifoldco/promptui"

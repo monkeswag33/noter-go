@@ -1,4 +1,4 @@
-package global
+package argon2
 
 import (
 	"crypto/rand"

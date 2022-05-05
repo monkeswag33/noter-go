@@ -1,4 +1,4 @@
-package global
+package env
 
 import (
 	"github.com/monkeswag33/noter-go/types"

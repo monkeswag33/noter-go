@@ -3,9 +3,9 @@ package new
 import (
 	"testing"
 
+	"github.com/monkeswag33/noter-go/argon2"
 	"github.com/monkeswag33/noter-go/db"
 	"github.com/monkeswag33/noter-go/errordef"
-	"github.com/monkeswag33/noter-go/global"
 	"github.com/stretchr/testify/assert"
 	passwordvalidator "github.com/wagslane/go-password-validator"
 )
@@ -23,7 +23,7 @@ func TestCreateUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, insertUser(user))
 	assert.Equal(t, user.Username, username)
-	matches, err := global.VerifyPass(password, user.Password)
+	matches, err := argon2.VerifyPass(password, user.Password)
 	assert.NoError(t, err)
 	assert.True(t, matches)
 }
