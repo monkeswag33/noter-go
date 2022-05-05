@@ -24,7 +24,9 @@ var userCmd = &cobra.Command{
 			}
 		} else {
 			logrus.Debug("Username not found, prompting")
-			username = prompt.Prompt(promptui.Prompt{}, "Username:", describeUserValidateUsername)
+			username = prompt.Prompt(promptui.Prompt{
+				Label: "Username:",
+			}, describeUserValidateUsername)
 		}
 		logrus.Debug("Username passed validation")
 		users, err := database.GetUsers(db.User{

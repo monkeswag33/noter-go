@@ -55,14 +55,17 @@ func createUser(args []string, password string) (*db.User, error) {
 		}
 	} else {
 		logrus.Debug("Username was not given, prompting for it")
-		username = prompt.Prompt(promptui.Prompt{}, "Username:", newUserValidateUsername)
+		username = prompt.Prompt(promptui.Prompt{
+			Label: "Username:",
+		}, newUserValidateUsername)
 	}
 	logrus.Debug("Username passed validation")
 	if len(password) == 0 {
 		logrus.Debug("Password was not given as parameter, prompting for it")
 		password = prompt.Prompt(promptui.Prompt{
-			Mask: '*',
-		}, "Password:", newUserValidatePassword)
+			Label: "Password:",
+			Mask:  '*',
+		}, newUserValidatePassword)
 	} else if err := newUserValidatePassword(password); err != nil {
 		return nil, err
 	}

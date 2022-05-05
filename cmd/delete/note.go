@@ -26,7 +26,9 @@ var noteCmd = &cobra.Command{
 			}
 		} else {
 			logrus.Debug("Note name not found, prompting")
-			noteName = prompt.Prompt(promptui.Prompt{}, "Note name:", deleteNoteValidateNoteName)
+			noteName = prompt.Prompt(promptui.Prompt{
+				Label: "Note name:",
+			}, deleteNoteValidateNoteName)
 		}
 		logrus.Debug("Username passed validation")
 		if err := database.DeleteNote(db.Note{

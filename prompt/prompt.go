@@ -12,8 +12,7 @@ var Templates *promptui.PromptTemplates = &promptui.PromptTemplates{
 	Success: "{{ . | bold }} ",
 }
 
-func Prompt(config promptui.Prompt, label string, validator func(string) error) string {
-	config.Label = label
+func Prompt(config promptui.Prompt, validator func(string) error) string {
 	config.Templates = Templates
 	config.Validate = validator
 	result, err := config.Run()

@@ -52,12 +52,16 @@ func createNote(args []string, username string, body string) (*db.Note, error) {
 			return nil, err
 		}
 	} else {
-		name = prompt.Prompt(promptui.Prompt{}, "Note name:", newNoteValidateNoteName)
+		name = prompt.Prompt(promptui.Prompt{
+			Label: "Note name:",
+		}, newNoteValidateNoteName)
 	}
 	logrus.Debug("Note name passed validation")
 	if len(username) == 0 {
 		logrus.Debug("Username not given as parameter, prompting for it")
-		username = prompt.Prompt(promptui.Prompt{}, "User note belongs to?", newNoteValidateUsername)
+		username = prompt.Prompt(promptui.Prompt{
+			Label: "Username:",
+		}, newNoteValidateUsername)
 	} else if err := newNoteValidateUsername(username); err != nil {
 		return nil, err
 	}
