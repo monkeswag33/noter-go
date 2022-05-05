@@ -23,4 +23,7 @@ jobs:
       - name: Download dependencies
         run: go mod tidy
       - name: Run tests
-        run: go test `go list ./... | grep -v db`
+        run: |
+          pwd
+          dir
+          go test `go list ./... | grep -v db`
